@@ -28,7 +28,7 @@ namespace Training.Specificaton
             number_of_pets = subject.AllPets().CountItems();
         };
         static int number_of_pets;
-
+    
         It should_return_the_number_of_all_pets_in_the_shop = () =>
             number_of_pets.ShouldEqual(2);
     }
