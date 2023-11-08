@@ -29,5 +29,15 @@ namespace Training.DomainClasses
         {
             return (name != null ? name.GetHashCode() : 0);
         }
+        
+        public static bool operator ==(Pet left, Pet right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Pet left, Pet right)
+        {
+            return !Equals(left, right);
+        }
     }
 }
