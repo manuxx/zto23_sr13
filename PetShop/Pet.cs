@@ -10,6 +10,10 @@ namespace Training.DomainClasses
         public float price { get; set; }
         public Species species { get; set; }
 
+        public bool IsDog()
+        {
+            return species == Species.Dog;
+        }
         public bool Equals(Pet other)
         {
             if (ReferenceEquals(null, other)) return false;

@@ -24,6 +24,7 @@ namespace Training.DomainClasses
             _petsInTheStore.Add(newPet);
         }
 
+        
         public IEnumerable<Pet> AllCats()
         {
             foreach (var pet in _petsInTheStore)
@@ -33,11 +34,69 @@ namespace Training.DomainClasses
             }
         }
 
+        private bool IsDog(Pet pet)
+        {
+            return pet.species == Species.Dog;
+        }
+
         public IEnumerable<Pet> AllPetsSortedByName()
         {
             var result = new List<Pet>(_petsInTheStore);
             result.Sort((p1,p2)=>p1.name.CompareTo(p2.name));
             return result;
+        }
+        private IEnumerable<Pet> FilterBy(Func<Pet, bool> compare)
+        {
+            foreach (var pet in _petsInTheStore)
+            {
+                if (compare(pet))
+                    yield return pet;
+            }
+        }
+        public IEnumerable<Pet> AllMice()
+        {
+            return FilterBy((Pet pet) => pet.species == Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllFemalePets()
+        {
+            return FilterBy((Pet pet) => pet.sex == Sex.Female);
+
+
+        }
+
+        public IEnumerable<Pet> AllCatsOrDogs()
+        {
+            return FilterBy((Pet pet) => pet.species == Species.Cat || pet.IsDog());
+
+        }
+
+        public IEnumerable<Pet> AllPetsButNotMice()
+        {
+            return FilterBy((Pet pet) => pet.species != Species.Mouse);
+
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2010()
+        {
+            return FilterBy((Pet pet) => pet.yearOfBirth > 2010);
+
+        }
+
+        public IEnumerable<Pet> AllDogsBornAfter2010()
+        {
+            return FilterBy((Pet pet) => pet.yearOfBirth > 2010 && pet.IsDog() );
+        }           
+
+        public IEnumerable<Pet> AllMaleDogs()
+        {
+            return FilterBy((Pet pet) => pet.sex == Sex.Male && pet.IsDog());
+
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
+        {
+            return FilterBy((Pet pet) => pet.yearOfBirth > 2011 && pet.species == Species.Rabbit);
         }
     }
 
