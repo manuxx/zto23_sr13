@@ -15,7 +15,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPets()
         {
-            return new ReadOnly<Pet>(_petsInTheStore);
+            return new ReadOnly(_petsInTheStore);
         }
 
         public void Add(Pet newPet)
@@ -23,36 +23,20 @@ namespace Training.DomainClasses
             if (_petsInTheStore.Contains(newPet)) return;
             _petsInTheStore.Add(newPet);
         }
-
-        public IEnumerable<Pet> AllCats()
-        {
-            foreach (var pet in _petsInTheStore)
-            {
-                if(pet.species==Species.Cat)
-                    yield return pet;
-            }
-        }
-
-        public IEnumerable<Pet> AllPetsSortedByName()
-        {
-            var result = new List<Pet>(_petsInTheStore);
-            result.Sort((p1,p2)=>p1.name.CompareTo(p2.name));
-            return result;
-        }
     }
 
-    public class ReadOnly<TItem> : IEnumerable<TItem>
+    public class ReadOnly : IEnumerable<Pet>
     {
-        private readonly IEnumerable<TItem> _pets;
+        private readonly IEnumerable<Pet> _pets;
 
-        public ReadOnly(IEnumerable<TItem> pets)
+        public ReadOnly(IEnumerable<Pet> pets)
         {
             _pets = pets;
         }
 
-        public IEnumerator<TItem> GetEnumerator()
+        public IEnumerator<Pet> GetEnumerator()
         {
-            return _pets.GetEnumerator();
+            throw new NotImplementedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
