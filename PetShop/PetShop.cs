@@ -27,13 +27,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllCats()
         {
-            foreach (var pet in _petsInTheStore)
-            {
-                if (pet.species == Species.Cat)
-                {
-                    yield return pet;
-                }
-            }
+            return _petsInTheStore.FilterBy(pet => pet.species == Species.Cat);
         }
 
         public IEnumerable<Pet> AllPetsSortedByName()
@@ -41,6 +35,46 @@ namespace Training.DomainClasses
             List<Pet> pets = new List<Pet>(_petsInTheStore);
             pets.Sort((pet1, pet2) => string.Compare(pet1.name, pet2.name, StringComparison.Ordinal));
             return pets;
+        }
+
+        public IEnumerable<Pet> AllMice()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.species == Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllFemalePets()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.sex == Sex.Female);
+        }
+
+        public IEnumerable<Pet> AllCatsOrDogs()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.species == Species.Cat || pet.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllPetsButNotMice()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.species != Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2010()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.yearOfBirth > 2010);
+        }
+
+        public IEnumerable<Pet> AllDogsBornAfter2010()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.yearOfBirth > 2010 && pet.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllMaleDogs()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.sex == Sex.Male && pet.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
+        {
+            return _petsInTheStore.FilterBy(pet => pet.yearOfBirth > 2011 || pet.species == Species.Rabbit);
         }
     }
 

@@ -12,10 +12,12 @@ namespace Training.DomainClasses
                 yield return item;
             }
         }
-    }
 
-    public static IEnumerable<TItem> SortedBy<TItem>(this IEnumerable<TItem> items, Func<TItem, TItem> sortFunc)
-    {
-        throw new NotImplementedException();
+        public static IEnumerable<TItem> FilterBy<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> func)
+        {
+            foreach (var item in items)
+                if (func(item))
+                    yield return item;
+        }
     }
 }
