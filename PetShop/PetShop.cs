@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Training.DomainClasses
 {
@@ -17,6 +17,22 @@ namespace Training.DomainClasses
         public IEnumerable<Pet> AllPets()
         {
             return new ReadOnly<Pet>(_petsInTheStore);
+        }
+
+        public IEnumerable<Pet> AllCats()
+        {
+            foreach (var pet in _petsInTheStore)
+            {
+                if (pet.species.Equals(Species.Cat))
+                    yield return pet;
+            }
+        }
+
+        public IEnumerable<Pet> AllPetsSortedByName()
+        {
+            var listToSort = new List<Pet>(_petsInTheStore);
+            listToSort.Sort((x, y) => x.name.CompareTo(y.name));
+            return listToSort;
         }
 
         public void Add(Pet newPet)
