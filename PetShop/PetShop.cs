@@ -12,7 +12,7 @@ namespace Training.DomainClasses
             this._petsInTheStore = petsInTheStore;
         }
 
-        public IEnumerable<Pet> AllPets() => _petsInTheStore.OneAtTheTime();
+        public IEnumerable<Pet> AllPets() => new Readonly<Pet>(_petsInTheStore.OneAtTheTime());
 
         public void Add(Pet newPet)
         {
