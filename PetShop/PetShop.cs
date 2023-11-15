@@ -42,6 +42,46 @@ namespace Training.DomainClasses
                 string.Compare(l.name, r.name, StringComparison.Ordinal));
             return petsCopy;
         }
+
+        public IEnumerable<Pet> AllMice()
+        {
+            return _petsInTheStore.All(p => p.species == Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllFemalePets()
+        {
+            return _petsInTheStore.All(p => p.sex == Sex.Female);
+        }
+
+        public IEnumerable<Pet> AllCatsOrDogs()
+        {
+            return _petsInTheStore.All(p => p.species == Species.Cat || p.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllPetsButNotMice()
+        {
+            return _petsInTheStore.All(p => p.species != Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2010()
+        {
+            return _petsInTheStore.All(p => p.yearOfBirth > 2010);
+        }
+
+        public IEnumerable<Pet> AllDogsBornAfter2010()
+        {
+            return AllPetsBornAfter2010().All(p => p.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllMaleDogs()
+        {
+            return _petsInTheStore.All(p => p.sex == Sex.Male && p.species == Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
+        {
+            return _petsInTheStore.All(p => p.yearOfBirth > 2011 || p.species == Species.Rabbit);
+        }
     }
 
     public class ReadOnly<TItem> : IEnumerable<TItem>
