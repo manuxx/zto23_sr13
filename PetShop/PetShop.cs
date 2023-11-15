@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Training.DomainClasses
 {
@@ -28,36 +29,18 @@ namespace Training.DomainClasses
         {
             foreach (var pet in _petsInTheStore)
             {
-                if(pet.species==Species.Cat)
+                if (pet.species == Species.Cat)
+                {
                     yield return pet;
+                }
             }
         }
 
         public IEnumerable<Pet> AllPetsSortedByName()
         {
-            var result = new List<Pet>(_petsInTheStore);
-            result.Sort((p1,p2)=>p1.name.CompareTo(p2.name));
-            return result;
-        }
-    }
-
-    public class ReadOnly<TItem> : IEnumerable<TItem>
-    {
-        private readonly IEnumerable<TItem> _pets;
-
-        public ReadOnly(IEnumerable<TItem> pets)
-        {
-            _pets = pets;
-        }
-
-        public IEnumerator<TItem> GetEnumerator()
-        {
-            return _pets.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            List<Pet> pets = new List<Pet>(_petsInTheStore);
+            pets.Sort((pet1, pet2) => string.Compare(pet1.name, pet2.name, StringComparison.Ordinal));
+            return pets;
         }
     }
 

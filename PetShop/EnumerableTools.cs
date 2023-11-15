@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Training.DomainClasses
@@ -11,5 +12,10 @@ namespace Training.DomainClasses
                 yield return item;
             }
         }
+    }
+
+    public static IEnumerable<TItem> SortedBy<TItem>(this IEnumerable<TItem> items, Func<TItem, TItem> sortFunc)
+    {
+        throw new NotImplementedException();
     }
 }
