@@ -18,6 +18,25 @@ namespace Training.DomainClasses
             return new ReadOnly(_petsInTheStore);
         }
 
+        public IEnumerable<Pet> AllCats()
+        {
+            foreach (var pet in _petsInTheStore)
+            {
+                if (pet.species == Species.Cat)
+                {
+                    yield return pet;
+                }
+            }
+        }
+
+        public IEnumerable<Pet> AllPetsSortedByName()
+        {
+            var sortedPets = new List<Pet>(_petsInTheStore);
+            sortedPets.Sort((pet1, pet2) => string.Compare(pet1.name, pet2.name, StringComparison.Ordinal));
+
+            return new ReadOnly(sortedPets);
+        }
+
         public void Add(Pet newPet)
         {
             if (_petsInTheStore.Contains(newPet)) return;
@@ -44,5 +63,4 @@ namespace Training.DomainClasses
             return GetEnumerator();
         }
     }
-
 }
