@@ -40,22 +40,22 @@ namespace Training.DomainClasses
             return !Equals(left, right);
         }
 
-        public static Func<Pet, bool> IsASpeciesOf(Species species)
+        public static Predicate<Pet> IsASpeciesOf(Species species)
         {
             return pet => pet.species == species;
         }
 
-        public static Func<Pet, bool> IsFemale()
+        public static Predicate<Pet> IsFemale()
         {
             return pet => pet.sex == Sex.Female;
         }
 
-        public static Func<Pet, bool> IsNotASpeciesOf(Species species)
+        public static Predicate<Pet> IsNotASpeciesOf(Species species)
         {
             return pet => pet.species != species;
         }
 
-        public static Func<Pet, bool> IsBornAfter(int year)
+        public static Predicate<Pet> IsBornAfter(int year)
         {
             return pet => pet.yearOfBirth > year;
         }
