@@ -38,6 +38,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMice()
         {
+            //return _petsInTheStore.ThatSatisfy(new SpeciesCriteria < Pet > criateria);
             return _petsInTheStore.ThatSatisfy(Pet.IsSpeciesOf(Species.Mouse));
         }
 

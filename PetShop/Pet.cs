@@ -45,6 +45,11 @@ namespace Training.DomainClasses
             return pet => pet.species == species;
         }
 
+        //public static Criteria<Pet> IsSpeciesOf(Species species)
+        //{
+        //    return new SpeciesCriteria(species);
+        //}
+
         public static Predicate<Pet> IsFemale()
         {
             return pet => pet.sex == Sex.Female;
@@ -55,4 +60,12 @@ namespace Training.DomainClasses
             return pet => pet.yearOfBirth > year;
         }
     }
+
+    //public class SpeciesCriteria : AnonymousCriteria<Pet>
+    //{
+    //    public SpeciesCriteria(Species species)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }
