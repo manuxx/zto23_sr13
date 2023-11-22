@@ -45,19 +45,49 @@ namespace Training.DomainClasses
             return new SpeciesCriteria(species);
         }
 
-        public static Predicate<Pet> IsFemale()
+        public static Criteria<Pet> IsFemale()
         {
-            return pet => pet.sex == Sex.Female;
+            return new SexCriteia(Sex.Female);
         }
 
-        public static Predicate<Pet> IsBornAfter(int year)
+        public static Criteria<Pet> IsBornAfter(int year)
         {
-            return pet => pet.yearOfBirth > year;
+            return new BorAfterCriteria(year);
         }
 
         public static Predicate<Pet> IsNotASpeciesOf(Species species)
         {
             return pet => pet.species != species;
+        }
+    }
+
+    public class BorAfterCriteria : Criteria<Pet>
+    {
+        private readonly int _year;
+
+        public BorAfterCriteria(int year)
+        {
+            _year = year;
+        }
+
+        public bool IsSatisfiedBy(Pet item)
+        {
+            return item.yearOfBirth > _year;
+        }
+    }
+
+    public class SexCriteia : Criteria<Pet>
+    {
+        private readonly Sex _sex;
+
+        public SexCriteia(Sex sex)
+        {
+            _sex = sex;
+        }
+
+        public bool IsSatisfiedBy(Pet pet)
+        {
+            return _sex == pet.sex;
         }
     }
 
