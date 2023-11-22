@@ -39,5 +39,25 @@ namespace Training.DomainClasses
         {
             return !Equals(left, right);
         }
+
+        public static Predicate<Pet> IsASpecieOf(Species species)
+        {
+            return pet=>pet.species == species;
+        }
+
+        public static bool IsFemale(Pet pet)
+        {
+            return pet.sex == Sex.Female;
+        }
+
+        public static Predicate<Pet> IsBornAfter(int year)
+        {
+            return pet => pet.yearOfBirth > year;
+        }
+
+        public static Predicate<Pet> IsNotASpecieOf(Species species)
+        {
+            return pet => pet.species != species;
+        }
     }
 }
