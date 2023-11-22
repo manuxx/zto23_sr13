@@ -40,9 +40,9 @@ namespace Training.DomainClasses
             return !Equals(left, right);
         }
 
-        public static Predicate<Pet> IsASpeciesOf(Species species)
+        public static Criteria<Pet> IsASpeciesOf(Species species)
         {
-            return pet => pet.species == species;
+            return new SpeciesCriteria(species);
         }
 
         public static Predicate<Pet> IsFemale()
@@ -58,6 +58,21 @@ namespace Training.DomainClasses
         public static Predicate<Pet> IsNotASpeciesOf(Species species)
         {
             return pet => pet.species != species;
+        }
+    }
+
+    public class SpeciesCriteria : Criteria<Pet>
+    {
+        private readonly Species _species;
+
+        public SpeciesCriteria(Species species)
+        {
+            _species = species;
+        }
+
+        public bool IsSatisfiedBy(Pet item)
+        {
+            throw new NotImplementedException();
         }
     }
 }
