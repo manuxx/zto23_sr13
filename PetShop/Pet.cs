@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Training.DomainClasses
 {
@@ -40,24 +41,84 @@ namespace Training.DomainClasses
             return !Equals(left, right);
         }
 
-        public static Predicate<Pet> IsASpeciesOf(Species species)
+        public static Criteria<Pet> IsASpeciesOf(Species species)
         {
-            return pet => pet.species == species;
+            return new SpeciesCriteria(species);
         }
 
-        public static Predicate<Pet> IsFemale()
+        public static Criteria<Pet> IsFemale()
         {
-            return pet => pet.sex == Sex.Female;
+            return new SexCriteria(Sex.Female);
         }
 
-        public static Predicate<Pet> IsNotASpeciesOf(Species species)
+        public static Criteria<Pet> IsNotASpeciesOf(Species species)
         {
-            return pet => pet.species != species;
+            return new NotASpeciesCriteria(species);
         }
 
-        public static Predicate<Pet> IsBornAfter(int year)
+        public static Criteria<Pet> IsBornAfter(int year)
         {
-            return pet => pet.yearOfBirth > year;
+            return new BornAfterCriteria(year);
+        }
+    }
+
+    public class BornAfterCriteria : Criteria<Pet>
+    {
+        private readonly int _year;
+
+        public BornAfterCriteria(int year)
+        {
+            _year = year;
+        }
+
+        public bool IsSatisfiedBy(Pet item)
+        {
+            return item.yearOfBirth > _year;
+        }
+    }
+
+    public class NotASpeciesCriteria : Criteria<Pet>
+    {
+        private readonly Species _species;
+
+        public NotASpeciesCriteria(Species species)
+        {
+            _species = species;
+        }
+
+        public bool IsSatisfiedBy(Pet item)
+        {
+            return _species != item.species;
+        }
+    }
+
+    public class SexCriteria : Criteria<Pet>
+    {
+        private readonly Sex _sex;
+
+        public SexCriteria(Sex sex)
+        {
+            _sex = sex;
+        }
+
+        public bool IsSatisfiedBy(Pet item)
+        {
+            return _sex == item.sex;
+        }
+    }
+
+    public class SpeciesCriteria : Criteria<Pet>
+    {
+        private readonly Species _species;
+
+        public SpeciesCriteria(Species species)
+        {
+            _species = species;
+        }
+
+        public bool IsSatisfiedBy(Pet pet)
+        {
+            return _species == pet.species;
         }
     }
 }
