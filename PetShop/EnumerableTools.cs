@@ -12,12 +12,36 @@ public static class EnumerableTools
         }
     }
 
-    public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> petsInTheStore, Func<TItem, bool> condition)
+    public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> condition)
     {
-        foreach (var pet in petsInTheStore)
+        Criteria<TItem> adapter = new AnonymousAdapterCriteria<TItem>(condition);
+        return items.ThatSatisfy(adapter);
+    }
+
+    public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> items, Criteria<TItem> criteria)
+    {
+        foreach (var pet in items)
         {
-            if (condition(pet))
+            if (criteria.IsSatisfiedBy())
                 yield return pet;
         }
     }
+}
+
+public class AnonymousAdapterCriteria<T> : Criteria<Pet>
+{
+    public AnonymousAdapterCriteria(Predicate<T, bool> condition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsSatisfiedBy<T>(T item)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public interface Criteria<T>
+{
+    bool IsSatisfiedBy();
 }
