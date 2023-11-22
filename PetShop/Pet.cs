@@ -45,9 +45,9 @@ namespace Training.DomainClasses
             return new SpeciesCriteria(species);
         }
 
-        public static bool isFemale(Pet pet)
+        public static Criteria<Pet> isFemale(Pet pet)
         {
-            return pet.sex == Sex.Female;
+            return new isFemaleCriteria(pet);
         }
 
         public static Func<Pet, bool> IsNotASpecies(Species species)
@@ -58,6 +58,21 @@ namespace Training.DomainClasses
         public static Func<Pet, bool> isBornAfter(int year)
         {
             return pet => pet.yearOfBirth > year;
+        }
+    }
+
+    public class isFemaleCriteria : Criteria<Pet>
+    {
+        private readonly Pet _pet;
+
+        public isFemaleCriteria(Pet pet)
+        {
+            _pet = pet;
+        }
+
+        public bool isSatisfiedBy(Pet item)
+        {
+            return item.sex == Sex.Female;
         }
     }
 
