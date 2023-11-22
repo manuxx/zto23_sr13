@@ -6,14 +6,40 @@ namespace Training.DomainClasses
 {
     public static class SatisfyClass
     {
-        public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> petsInTheStore, Func<TItem, bool> condition)
+        public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> condition)
         {
-            foreach (var pet in petsInTheStore)
+            Criteria<TItem> adapter = new AnonymousCriteria<TItem>(condition);
+            return items.ThatSatisfy(adapter);
+        }
+
+        public static IEnumerable<TItem> ThatSatisfy<TItem>(this IEnumerable<TItem> items, Criteria<TItem> criteria)
+        {
+            foreach (var item in items)
             {
-                if (condition(pet))
-                    yield return pet;
+                if (criteria.isSatisfiedBy(item))
+                    yield return item;
             }
         }
+    }
+
+    public class AnonymousCriteria<T> : Criteria<T>
+    {
+        private readonly Func<T, bool> _condition;
+
+        public AnonymousCriteria(Func<T, bool> condition)
+        {
+            _condition = condition;
+        }
+
+        public bool isSatisfiedBy(T item)
+        {
+            return _condition(item);
+        }
+    }
+
+    public interface Criteria<T>
+    {
+        bool isSatisfiedBy(T item);
     }
 
     public class PetShop
@@ -38,12 +64,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllCats()
         {
-            return _petsInTheStore.ThatSatisfy(isSpecies(Species.Cat));
-        }
-
-        private static Func<Pet, bool> isSpecies(Species species)
-        {
-            return pet=>pet.species == species;
+            return _petsInTheStore.ThatSatisfy(Pet.isSpecies(Species.Cat));
         }
 
         public IEnumerable<Pet> AllPetsSortedByName()
@@ -55,17 +76,12 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMice()
         {
-            return _petsInTheStore.ThatSatisfy(isSpecies(Species.Mouse));
+            return _petsInTheStore.ThatSatisfy(Pet.isSpecies(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllFemalePets()
         {
-            return _petsInTheStore.ThatSatisfy(isFemale);
-        }
-
-        private static bool isFemale(Pet pet)
-        {
-            return pet.sex == Sex.Female;
+            return _petsInTheStore.ThatSatisfy(Pet.isFemale);
         }
 
 
@@ -76,22 +92,12 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPetsButNotMice()
         {
-            return _petsInTheStore.ThatSatisfy(IsNotASpecies(Species.Mouse));
-        }
-
-        private static Func<Pet, bool> IsNotASpecies(Species species)
-        {
-            return pet => pet.species != species;
+            return _petsInTheStore.ThatSatisfy(Pet.IsNotASpecies(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2010()
         {
-            return _petsInTheStore.ThatSatisfy(isBornAfter(2010));
-        }
-
-        private static Func<Pet, bool> isBornAfter(int year)
-        {
-            return pet => pet.yearOfBirth > year;
+            return _petsInTheStore.ThatSatisfy(Pet.isBornAfter(2010));
         }
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
