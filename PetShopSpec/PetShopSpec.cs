@@ -7,7 +7,7 @@ using Machine.Specifications.Model;
 
 namespace Training.Specificaton
 {
-    public abstract class pet_shop_concern : Specification<PetShop>
+    public abstract class pet_shop_concern : Specification<DomainClasses.PetShop>
     {
         Establish context = () =>
         {
@@ -99,7 +99,7 @@ namespace Training.Specificaton
         private static Pet fluffy_the_second;
     }
     
-    [Subject(typeof(PetShop))]
+    [Subject(typeof(DomainClasses.PetShop))]
     class when_trying_to_change_returned_collection_of_pets : pet_shop_concern
     {
         Establish c = () => pet_initial_content.AddManyItems(new Pet { name = "Pixie" }, new Pet { name = "Dixie" });

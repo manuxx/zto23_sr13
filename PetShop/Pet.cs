@@ -1,4 +1,5 @@
 using System;
+using PetShop;
 
 namespace Training.DomainClasses
 {
@@ -53,6 +54,7 @@ namespace Training.DomainClasses
         public static Predicate<Pet> IsASpeciesOf(Species species)
         {
             return pet => pet.species == species;
+            //return new SpeciesCriterion(species);
         }
     }
 }
