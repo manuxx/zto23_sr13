@@ -39,5 +39,25 @@ namespace Training.DomainClasses
         {
             return !Equals(left, right);
         }
+
+        public static Func<Pet, bool> isSpecies(Species species)
+        {
+            return pet=>pet.species == species;
+        }
+
+        public static bool isFemale(Pet pet)
+        {
+            return pet.sex == Sex.Female;
+        }
+
+        public static Func<Pet, bool> IsNotASpecies(Species species)
+        {
+            return pet => pet.species != species;
+        }
+
+        public static Func<Pet, bool> isBornAfter(int year)
+        {
+            return pet => pet.yearOfBirth > year;
+        }
     }
 }
