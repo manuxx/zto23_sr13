@@ -39,5 +39,15 @@ namespace Training.DomainClasses
         {
             return !Equals(left, right);
         }
+
+        public static Func<Pet, bool> IsASpeciesOf(Species species)
+        {
+            return pet => pet.species == species;
+        }
+
+        public static Func<Pet, bool> IsBornAfter(int year)
+        {
+            return pet => pet.yearOfBirth > year;
+        }
     }
 }
