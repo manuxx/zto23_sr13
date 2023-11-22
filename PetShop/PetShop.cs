@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Training.DomainClasses
@@ -38,12 +37,12 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMice()
         {
-            return _petsInTheStore.ThatSatisfy(Pet.IsSpecie(Species.Mouse));
+            return _petsInTheStore.ThatSatisfy(Pet.IsSpeciesOf(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllFemalePets()
         {
-            return _petsInTheStore.ThatSatisfy(Pet.IsFemale);
+            return _petsInTheStore.ThatSatisfy(Pet.IsFemale());
         }
 
         public IEnumerable<Pet> AllCatsOrDogs()
@@ -53,7 +52,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPetsButNotMice()
         {
-            return _petsInTheStore.ThatSatisfy(Pet.IsNotSpecie(Species.Mouse));
+            return _petsInTheStore.ThatSatisfy(Pet.IsNotSpeciesOf(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2010()
@@ -68,32 +67,12 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMaleDogs()
         {
-            return _petsInTheStore.ThatSatisfy(pet => pet.species == Species.Dog && Pet.IsMale(pet));
+            return _petsInTheStore.ThatSatisfy(pet => pet.species == Species.Dog && pet.sex == Sex.Male);
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
             return _petsInTheStore.ThatSatisfy(pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011);
-        }
-    }
-
-    public class ReadOnly<TItem> : IEnumerable<TItem>
-    {
-        private readonly IEnumerable<TItem> _pets;
-
-        public ReadOnly(IEnumerable<TItem> pets)
-        {
-            _pets = pets;
-        }
-
-        public IEnumerator<TItem> GetEnumerator()
-        {
-            return _pets.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }
