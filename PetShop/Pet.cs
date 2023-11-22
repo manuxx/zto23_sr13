@@ -51,10 +51,10 @@ namespace Training.DomainClasses
             return pet.sex == Sex.Female;
         }
 
-        public static Predicate<Pet> IsASpeciesOf(Species species)
+        public static ICriterion<Pet> IsASpeciesOf(Species species)
         {
-            return pet => pet.species == species;
-            //return new SpeciesCriterion(species);
+            //return pet => pet.species == species;
+            return new SpeciesCriterion(species);
         }
     }
 }

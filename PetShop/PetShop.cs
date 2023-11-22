@@ -64,7 +64,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return _petsInTheStore.SelectAll(Pet.IsASpeciesOf(Species.Dog).And(Pet.IsBornAfter(2010)));
+            return _petsInTheStore.SelectAll(pet => pet.species == Species.Dog && pet.yearOfBirth > 2010);
         }
 
         public IEnumerable<Pet> AllMaleDogs()
@@ -74,7 +74,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.SelectAll(Pet.IsASpeciesOf(Species.Rabbit).Or(Pet.IsBornAfter(2011)));
+            return _petsInTheStore.SelectAll(pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011);
         }
     }
 

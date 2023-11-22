@@ -16,4 +16,19 @@ namespace Training.DomainClasses
             return pet.species == _species;
         }
     }
+
+    internal class SexCriterion : ICriterion<Pet>
+    {
+        private readonly Sex _sex;
+
+        public SexCriterion(Sex sex)
+        {
+            _sex = sex;
+        }
+
+        public bool IsSatisfiedBy(Pet pet)
+        {
+            return pet.sex == _sex;
+        }
+    }
 }
