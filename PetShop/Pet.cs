@@ -40,9 +40,9 @@ namespace Training.DomainClasses
             return !Equals(left, right);
         }
 
-        public static Predicate<Pet> IsASpecieOf(Species species)
+        public static Criteria<Pet> IsASpecieOf(Species species)
         {
-            return pet=>pet.species == species;
+            return new SpeciesCriteria(species);
         }
 
         public static bool IsFemale(Pet pet)
