@@ -70,9 +70,9 @@ namespace Training.DomainClasses
             _species = species;
         }
 
-        public bool IsSatisfiedBy(Pet item)
+        public bool IsSatisfiedBy(Pet pet)
         {
-            throw new NotImplementedException();
+            return _species == pet.species;
         }
     }
 }
