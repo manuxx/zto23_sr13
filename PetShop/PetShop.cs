@@ -22,24 +22,24 @@ namespace Training.DomainClasses
         }
     }
 
-    public class AnonymousCriteria<T> : Criteria<T>
+    public class AnonymousCriteria<TItem> : Criteria<TItem>
     {
-        private readonly Func<T, bool> _condition;
+        private readonly Func<TItem, bool> _condition;
 
-        public AnonymousCriteria(Func<T, bool> condition)
+        public AnonymousCriteria(Func<TItem, bool> condition)
         {
             _condition = condition;
         }
 
-        public bool isSatisfiedBy(T item)
+        public bool isSatisfiedBy(TItem item)
         {
             return _condition(item);
         }
     }
 
-    public interface Criteria<T>
+    public interface Criteria<TItem>
     {
-        bool isSatisfiedBy(T item);
+        bool isSatisfiedBy(TItem item);
     }
 
     public class PetShop
