@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Training.DomainClasses;
 using Machine.Specifications;
 using It = Machine.Specifications.It;
+using Machine.Specifications.Model;
 
 namespace Training.Specificaton
 {
@@ -208,7 +209,53 @@ namespace Training.Specificaton
             var foundPets = subject.AllCats();
             foundPets.ShouldContainOnly(cat_Tom, cat_Jinx);
         };
+        private It should_be_able_to_find_all_mice = () =>
+        {
+            var foundPets = subject.AllMice();
+            foundPets.ShouldContainOnly(mouse_Dixie, mouse_Jerry);
+        };
+       
+        private It should_be_able_to_find_all_female_pets = () =>
+        {
+            var foundPets = subject.AllFemalePets();
+            foundPets.ShouldContainOnly(dog_Lassie, mouse_Dixie);
+        };
+        private It should_be_able_to_find_all_cats_or_dogs = () =>
+        {
+            var foundPets = subject.AllCatsOrDogs();
+            foundPets.ShouldContainOnly(cat_Tom, cat_Jinx, dog_Huckelberry, dog_Lassie, dog_Pluto);
+        };
+        private It should_be_able_to_find_all_pets_but_not_mice = () =>
+        {
+            var foundPets = subject.AllPetsButNotMice();
+            foundPets.ShouldContainOnly(cat_Tom, cat_Jinx, dog_Huckelberry, dog_Lassie, dog_Pluto, rabbit_Fluffy);
+        };
+        private It should_be_able_to_find_all_pets_born_after_2010 = () =>
+        {
+            var foundPets = subject.AllPetsBornAfter2010();
+            foundPets.ShouldContainOnly(dog_Pluto, rabbit_Fluffy, mouse_Dixie, mouse_Jerry);
+        };
+        
+        private It should_be_able_to_find_all_young_dogs = () =>
+        {
+            var foundPets = subject.AllDogsBornAfter2010();
+            foundPets.ShouldContainOnly(dog_Pluto);
+        };
+        
+        private It should_be_able_to_find_all_male_dogs = () =>
+        {
+            var foundPets = subject.AllMaleDogs();
+            foundPets.ShouldContainOnly(dog_Huckelberry, dog_Pluto);
+        };
+        
+        private It should_be_able_to_find_all_young_pets_or_rabbits = () =>
+        {
+            var foundPets = subject.AllPetsBornAfter2011OrRabbits();
+            foundPets.ShouldContainOnly(mouse_Jerry, rabbit_Fluffy);
+        };
+
     }
+
 
     class when_sorting_pets : concern_with_pets_for_sorting_and_filtering
     {
@@ -221,5 +268,5 @@ namespace Training.Specificaton
                 dog_Pluto, cat_Tom);
         };
     };
-
+    
 }

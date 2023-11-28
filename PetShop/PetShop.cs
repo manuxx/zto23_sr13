@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -25,7 +26,18 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPets()
         {
-            return _petsInTheStore.OneAtATime();
+            return new ReadOnly<Pet>(_petsInTheStore);
+        }
+
+        public void Add(Pet newPet)
+        {
+            if (_petsInTheStore.Contains(newPet)) return;
+            _petsInTheStore.Add(newPet);
+        }
+
+        public IEnumerable<Pet> AllCats()
+        {
+            return _petsInTheStore.SatisfyThat(Pet.IsSpecie(Species.Cat));
         }
 
         public IEnumerable<Pet> AllPetsSortedByName()
@@ -35,21 +47,64 @@ namespace Training.DomainClasses
             return result;
         }
 
-        public IEnumerable<Pet> AllCats()
+        public IEnumerable<Pet> AllMice()
         {
-            foreach (var pet in _petsInTheStore)
-            {
-                if (pet.species == Species.Cat)
-                {
-                    yield return pet;
-                }
-            }
+            return _petsInTheStore.SatisfyThat(Pet.IsSpecie(Species.Mouse));
         }
 
-        public void Add(Pet newPet)
+        public IEnumerable<Pet> AllFemalePets()
         {
-            if (_petsInTheStore.Contains(newPet)) return;
-            _petsInTheStore.Add(newPet);
+            return _petsInTheStore.SatisfyThat(Pet.IsFemale());
+        }
+
+        public IEnumerable<Pet> AllCatsOrDogs()
+        {
+            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Cat || pet.species==Species.Dog);
+        }
+
+        public IEnumerable<Pet> AllPetsButNotMice()
+        {
+            return _petsInTheStore.SatisfyThat(pet => pet.species != Species.Mouse);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2010()
+        {
+            return _petsInTheStore.SatisfyThat(Pet.isBornAfter(2010));
+        }
+
+        public IEnumerable<Pet> AllDogsBornAfter2010()
+        {
+            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Dog && pet.yearOfBirth > 2010);
+        }
+
+        public IEnumerable<Pet> AllMaleDogs()
+        {
+            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Dog && pet.sex==Sex.Male);
+        }
+
+        public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
+        {
+            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011);
+        }
+    }
+
+    public class ReadOnly<TItem> : IEnumerable<TItem>
+    {
+        private readonly IEnumerable<TItem> _pets;
+
+        public ReadOnly(IEnumerable<TItem> pets)
+        {
+            _pets = pets;
+        }
+
+        public IEnumerator<TItem> GetEnumerator()
+        {
+            return _pets.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
