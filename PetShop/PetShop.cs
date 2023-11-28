@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using Microsoft.VisualBasic;
 
 namespace Training.DomainClasses
 {
@@ -15,94 +15,20 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPets()
         {
-            return new ReadOnly<Pet>(_petsInTheStore);
+            foreach (var pet in _petsInTheStore)
+            {
+                yield return pet;
+            }
         }
 
         public void Add(Pet newPet)
         {
-            if (_petsInTheStore.Contains(newPet)) return;
-            _petsInTheStore.Add(newPet);
-        }
-
-        public IEnumerable<Pet> AllCats()
-        {
-            return FilterBy(pet=>pet.species == Species.Cat);
-        }
-
-        public IEnumerable<Pet> AllPetsSortedByName()
-        {
-            var result = new List<Pet>(_petsInTheStore);
-            result.Sort((p1,p2)=>p1.name.CompareTo(p2.name));
-            return result;
-        }
-
-        public IEnumerable<Pet> AllMice()
-        {
-            return FilterBy(pet => pet.species == Species.Mouse);
-        }
-
-        private IEnumerable<Pet> FilterBy(Func<Pet, bool> condition)
-        {
             foreach (var pet in _petsInTheStore)
             {
-                if (condition(pet))
-                    yield return pet;
+                if (newPet.name == pet.name)
+                    return;
             }
-        }
-
-        public IEnumerable<Pet> AllFemalePets()
-        {
-            return FilterBy(pet => pet.sex == Sex.Female);
-        }
-
-        public IEnumerable<Pet> AllCatsOrDogs()
-        {
-            return FilterBy(pet => pet.species == Species.Cat || pet.species==Species.Dog);
-        }
-
-        public IEnumerable<Pet> AllPetsButNotMice()
-        {
-            return FilterBy(pet => pet.species != Species.Mouse);
-        }
-
-        public IEnumerable<Pet> AllPetsBornAfter2010()
-        {
-            return FilterBy(pet => pet.yearOfBirth > 2010);
-        }
-    
-        public IEnumerable<Pet> AllDogsBornAfter2010()
-        {
-            return FilterBy(pet => pet.species==Species.Dog && pet.yearOfBirth > 2010);
-        }
-
-        public IEnumerable<Pet> AllMaleDogs()
-        {
-            return FilterBy(pet => pet.species == Species.Dog && pet.sex==Sex.Male);
-        }
-
-        public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
-        {
-            return FilterBy(pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011);
-        }
-    }
-
-    public class ReadOnly<TItem> : IEnumerable<TItem>
-    {
-        private readonly IEnumerable<TItem> _pets;
-
-        public ReadOnly(IEnumerable<TItem> pets)
-        {
-            _pets = pets;
-        }
-
-        public IEnumerator<TItem> GetEnumerator()
-        {
-            return _pets.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            _petsInTheStore.Add(newPet);
         }
     }
 }
