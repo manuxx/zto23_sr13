@@ -1,9 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualBasic;
 
 namespace Training.DomainClasses
 {
+    public static class EnumerableTools
+    {
+        public static IEnumerable<TItem> OneAtATime<TItem>(this IEnumerable<TItem> items)
+        {
+            foreach (var item in items)
+            {
+                yield return item;
+            }
+        }
+    }
     public class PetShop
     {
         private IList<Pet> _petsInTheStore;
@@ -15,19 +24,12 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPets()
         {
-            foreach (var pet in _petsInTheStore)
-            {
-                yield return pet;
-            }
+            return _petsInTheStore.OneAtATime();
         }
 
         public void Add(Pet newPet)
         {
-            foreach (var pet in _petsInTheStore)
-            {
-                if (newPet.name == pet.name)
-                    return;
-            }
+            if (_petsInTheStore.Contains(newPet)) return;
             _petsInTheStore.Add(newPet);
         }
     }
