@@ -211,7 +211,8 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_mice = () =>
         {
-            var foundPets = subject.AllMice();
+            var criteria = Where<Pet>.HasAn(p => p.species).EqualTo(Species.Mouse);
+            var foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(mouse_Dixie, mouse_Jerry);
         };
        
@@ -253,6 +254,57 @@ namespace Training.Specificaton
             var foundPets = subject.AllPetsBornAfter2011OrRabbits();
             foundPets.ShouldContainOnly(mouse_Jerry, rabbit_Fluffy);
         };
+
+    }
+
+    internal class Where<TItem>
+    {
+        public static CriteriaBuilder<TItem, TProperty2> HasAn<TProperty2>(Func<TItem, TProperty2> propertySelector)
+        {
+            return new CriteriaBuilder<TItem, TProperty2>(propertySelector);
+        }
+
+        public static ComparableCriteriaBuilder<TItem, TProperty> HasComparable<TProperty>(Func<TItem, TProperty> propertySelector) where TProperty : IComparable<TProperty>
+        {
+            return new ComparableCriteriaBuilder<TItem, TProperty>(propertySelector);
+        }
+
+        
+    }
+
+    internal class ComparableCriteriaBuilder<TItem, TProperty2> where TProperty2 : IComparable<TProperty2>
+    {
+        private Func<TItem, TProperty2> _propertySelector;
+
+        public ComparableCriteriaBuilder(Func<TItem, TProperty2> propertySelector)
+        {
+            _propertySelector = propertySelector;
+        }
+
+        public Criteria<TItem> EqualTo(TProperty2 mouse)
+        {
+            return new AnonymousCriteria<TItem>(p => _propertySelector(p).Equals(mouse));
+        }
+
+        public Criteria<TItem> GreaterThan(TProperty2 i)
+        {
+            return new AnonymousCriteria<TItem>(p => _propertySelector(p).CompareTo(i) > 0);
+        }
+    }
+
+    internal class CriteriaBuilder<TItem, TProperty>
+    {
+        private Func<TItem, TProperty> _propertySelector;
+
+        public CriteriaBuilder(Func<TItem, TProperty> propertySelector)
+        {
+            _propertySelector = propertySelector;
+        }
+
+        public Criteria<TItem> EqualTo(TProperty mouse)
+        {
+            return new AnonymousCriteria<TItem>(p => _propertySelector(p).Equals(mouse));
+        }
 
     }
 
