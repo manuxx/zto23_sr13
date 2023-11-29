@@ -4,6 +4,7 @@ using Training.DomainClasses;
 using Machine.Specifications;
 using It = Machine.Specifications.It;
 using Machine.Specifications.Model;
+using Newtonsoft.Json.Linq;
 
 namespace Training.Specificaton
 {
@@ -211,13 +212,15 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_mice = () =>
         {
-            var foundPets = subject.AllMice();
+            Criteria<Pet> criteria = Where<Pet>.HasAn(p => p.species).EqualTo(Species.Mouse);
+            IEnumerable<Pet> foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(mouse_Dixie, mouse_Jerry);
         };
        
         private It should_be_able_to_find_all_female_pets = () =>
         {
-            var foundPets = subject.AllFemalePets();
+            var criteria = Where<Pet>.HasAn(p => p.sex).EqualTo(Sex.Female);
+            var foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(dog_Lassie, mouse_Dixie);
         };
         private It should_be_able_to_find_all_cats_or_dogs = () =>
@@ -232,7 +235,8 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_pets_born_after_2010 = () =>
         {
-            var foundPets = subject.AllPetsBornAfter2010();
+            var criteria = Where<Pet>.HasAn(p => p.yearOfBirth).GreaterThan(2010);
+            var foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(dog_Pluto, rabbit_Fluffy, mouse_Dixie, mouse_Jerry);
         };
         
@@ -254,6 +258,35 @@ namespace Training.Specificaton
             foundPets.ShouldContainOnly(mouse_Jerry, rabbit_Fluffy);
         };
 
+    }
+
+    public static class Where<TItem>
+    {
+        public static CriteriaBuilder<TItem, TProperty> HasAn<TProperty>(Func<TItem, TProperty> propertySelector)
+        {
+            return new CriteriaBuilder<TItem, TProperty>(propertySelector);
+        }
+
+    }
+
+    public class CriteriaBuilder<TItem, TProperty>
+    {
+        private readonly Func<TItem, TProperty> _propertySelector;
+
+        public CriteriaBuilder(Func<TItem, TProperty> propertySelector)
+        {
+            _propertySelector = propertySelector;
+        }
+
+        public Criteria<TItem> EqualTo(TProperty property)
+        {
+            return new AnonymousCriteria<TItem>(p => _propertySelector(p).Equals(property));
+        }
+
+        public Criteria<TItem> GreaterThan(IComparable<TProperty> i)
+        {
+            return new AnonymousCriteria<TItem>(p => i.CompareTo(_propertySelector(p)) < 0);
+        }
     }
 
 
