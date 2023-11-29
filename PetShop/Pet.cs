@@ -47,7 +47,7 @@ namespace Training.DomainClasses
 
         public static Criteria<Pet> IsFemale()
         {
-            return new SexCriteia(Sex.Female);
+            return new SexCriteria(Sex.Female);
         }
 
         public static Criteria<Pet> IsBornAfter(int year)
@@ -55,9 +55,9 @@ namespace Training.DomainClasses
             return new BorAfterCriteria(year);
         }
 
-        public static Predicate<Pet> IsNotASpeciesOf(Species species)
+        public static Criteria<Pet> IsNotASpeciesOf(Species species)
         {
-            return pet => pet.species != species;
+            return new Negation<Pet>(IsASpeciesOf(species));
         }
 
         public class BorAfterCriteria : Criteria<Pet>
@@ -75,11 +75,11 @@ namespace Training.DomainClasses
             }
         }
 
-        public class SexCriteia : Criteria<Pet>
+        public class SexCriteria : Criteria<Pet>
         {
             private readonly Sex _sex;
 
-            public SexCriteia(Sex sex)
+            public SexCriteria(Sex sex)
             {
                 _sex = sex;
             }
@@ -105,6 +105,4 @@ namespace Training.DomainClasses
             }
         }
     }
-
-   
 }
