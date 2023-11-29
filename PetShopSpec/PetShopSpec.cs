@@ -211,10 +211,34 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_mice = () =>
         {
-            var foundPets = subject.AllMice();
+            Criteria<Pet> criteria = Where<Pet>.HasAn(p => p.species).EqualTo(Species.Mouse);
+            IEnumerable<Pet> foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(mouse_Dixie, mouse_Jerry);
         };
-       
+
+        internal class Where<TItem>
+        {
+            public static criteriaBuilder<TItem, TProperty> HasAn<TProperty>(Func<TItem, TProperty> propertySelector)
+            {
+                return new criteriaBuilder<TItem, TProperty>(propertySelector);
+            }
+        }
+
+        internal class criteriaBuilder<TItem,TProperty>
+        {
+            private readonly Func<TItem, TProperty> _propertySelector;
+
+            public criteriaBuilder(Func<TItem, TProperty> propertySelector)
+            {
+                _propertySelector = propertySelector;
+            }
+
+            public Criteria<TItem> EqualTo(TProperty mouse)
+            {
+                return new AnonymousCriteria<TItem>(p => _propertySelector(p).Equals(mouse));
+            }
+        }
+
         private It should_be_able_to_find_all_female_pets = () =>
         {
             var foundPets = subject.AllFemalePets();
