@@ -63,7 +63,13 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return _petsInTheStore.ThatSatisfy(new Conjunction(Pet.IsASpeciesOf(Species.Dog), Pet.IsBornAfter(2010)));
+            return _petsInTheStore.ThatSatisfy(And(Pet.IsASpeciesOf(Species.Dog), Pet.IsBornAfter(2010)));
+        }
+
+        private static Conjunction<Pet> And(
+            Criteria<Pet> criteria1, Criteria<Pet> criteria2)
+        {
+            return new Conjunction<Pet>(criteria1, criteria2);
         }
 
         public IEnumerable<Pet> AllMaleDogs()
@@ -73,39 +79,44 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.ThatSatisfy(new Alternative(Pet.IsASpeciesOf(Species.Rabbit), Pet.IsBornAfter(2011)));
+            return _petsInTheStore.ThatSatisfy(new Alternative<Pet>(Pet.IsASpeciesOf(Species.Rabbit), Pet.IsBornAfter(2011)));
         }
     }
 
-    public class Alternative : Criteria<Pet>
+    public abstract class AlternativeBase<TItem> : Criteria<TItem>
     {
-        private readonly Criteria<Pet> _isASpeciesOf;
-        private readonly Criteria<Pet> _isBornAfter;
+        protected Criteria<TItem> _isASpeciesOf;
+        protected Criteria<TItem> _isBornAfter;
 
-        public Alternative(Criteria<Pet> isASpeciesOf, Criteria<Pet> isBornAfter)
+        public AlternativeBase(Criteria<TItem> isASpeciesOf, Criteria<TItem> isBornAfter)
         {
             _isASpeciesOf = isASpeciesOf;
             _isBornAfter = isBornAfter;
         }
 
-        public bool IsSatisfiedBy(Pet item)
+        public abstract bool IsSatisfiedBy(TItem item);
+    }
+
+    public class Alternative<TItem> : AlternativeBase<TItem>
+    {
+        public Alternative(Criteria<TItem> isASpeciesOf, Criteria<TItem> isBornAfter) : base(isASpeciesOf, isBornAfter)
+        {
+        }
+
+        public override bool IsSatisfiedBy(TItem item)
         {
             return _isASpeciesOf.IsSatisfiedBy(item) || _isBornAfter.IsSatisfiedBy(item);
         }
     }
 
-    public class Conjunction : Criteria<Pet>
+    public class Conjunction<TItem> : AlternativeBase<TItem>
     {
-        private readonly Criteria<Pet> _isASpeciesOf;
-        private readonly Criteria<Pet> _isBornAfter;
 
-        public Conjunction(Criteria<Pet> isASpeciesOf, Criteria<Pet> isBornAfter)
+        public Conjunction(Criteria<TItem> isASpeciesOf, Criteria<TItem> isBornAfter) : base(isASpeciesOf, isBornAfter)
         {
-            _isASpeciesOf = isASpeciesOf;
-            _isBornAfter = isBornAfter;
         }
 
-        public bool IsSatisfiedBy(Pet item)
+        public override bool IsSatisfiedBy(TItem item)
         {
             return _isASpeciesOf.IsSatisfiedBy(item) && _isBornAfter.IsSatisfiedBy(item);
         }
