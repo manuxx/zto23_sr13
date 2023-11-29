@@ -2,7 +2,7 @@ using System;
 
 namespace Training.DomainClasses
 {
-    public class Pet : IEquatable<Pet>
+    public partial class Pet : IEquatable<Pet>
     {
         public Sex sex;
         public string name { get; set; }
@@ -55,11 +55,6 @@ namespace Training.DomainClasses
             return new BorAfterCriteria(year);
         }
 
-        public static Predicate<Pet> IsNotASpeciesOf(Species species)
-        {
-            return pet => pet.species != species;
-        }
-
         public class BorAfterCriteria : Criteria<Pet>
         {
             private readonly int _year;
@@ -105,6 +100,4 @@ namespace Training.DomainClasses
             }
         }
     }
-
-   
 }
