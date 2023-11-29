@@ -55,9 +55,9 @@ namespace Training.DomainClasses
             return new BorAfterCriteria(year);
         }
 
-        public static Predicate<Pet> IsNotASpeciesOf(Species species)
+        public static Criteria<Pet> IsNotASpeciesOf(Species species)
         {
-            return pet => pet.species != species;
+            return new Negation<Pet>(IsASpeciesOf(species));
         }
 
         public class BorAfterCriteria : Criteria<Pet>
@@ -106,5 +106,18 @@ namespace Training.DomainClasses
         }
     }
 
-   
+    public class Negation<TItem> : Criteria<TItem>
+    {
+        private readonly Criteria<TItem> _innerCteria;
+
+        public Negation(Criteria<TItem> innerCteria)
+        {
+            _innerCteria = innerCteria;
+        }
+
+        public bool IsSatisfiedBy(TItem item)
+        {
+            return ! _innerCteria.IsSatisfiedBy(item);
+        }
+    }
 }
