@@ -211,7 +211,9 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_mice = () =>
         {
-            var foundPets = subject.AllMice();
+            Criteria<Pet> criteria = Where<Pet>.HasAn(pet => pet.species).EqualTo(Species.Mouse);
+
+            IEnumerable<Pet> foundPets = subject.AllPets().ThatSatisfy(criteria);
             foundPets.ShouldContainOnly(mouse_Dixie, mouse_Jerry);
         };
        
@@ -232,6 +234,7 @@ namespace Training.Specificaton
         };
         private It should_be_able_to_find_all_pets_born_after_2010 = () =>
         {
+            var criteria = Where<Pet>.HasAn(pet => pet.yearOfBirth).GreaterThan(2010);
             var foundPets = subject.AllPetsBornAfter2010();
             foundPets.ShouldContainOnly(dog_Pluto, rabbit_Fluffy, mouse_Dixie, mouse_Jerry);
         };
@@ -254,6 +257,34 @@ namespace Training.Specificaton
             foundPets.ShouldContainOnly(mouse_Jerry, rabbit_Fluffy);
         };
 
+    }
+
+    internal class Where<TItem>
+    {
+        public static ObjectProperty<TItem, TProperty> HasAn<TProperty>(Func<TItem, TProperty> propertySelector)
+        {
+            return new ObjectProperty<TItem, TProperty>(propertySelector);
+        }
+    }
+
+    internal class ObjectProperty<TItem, TProperty>
+    {
+        private readonly Func<TItem, TProperty> _propertySelector;
+
+        public ObjectProperty(Func<TItem, TProperty> propertySelector)
+        {
+            _propertySelector = propertySelector;
+        }
+
+        public Criteria<TItem> GreaterThan(IComparable<TProperty> value)
+        {
+            return new AnonymousCriteria<TItem>(item => value.CompareTo(_propertySelector(item)) < 0);
+        }
+
+        public Criteria<TItem> EqualTo(TProperty value)
+        {
+            return new AnonymousCriteria<TItem>(item => value.Equals(_propertySelector(item)));
+        }
     }
 
 
