@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Training.DomainClasses
 {
+    public static class CriteriaExtension
+    {
+    }
+
     public class PetShop
     {
         private IList<Pet> _petsInTheStore;
@@ -53,7 +57,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllCatsOrDogs()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Cat || pet.species==Species.Dog));
+            return _petsInTheStore.ThatSatisfy(new Alternative<Pet>(Pet.IsASpeciesOf(Species.Cat), Pet.IsASpeciesOf(Species.Dog)));
         }
 
         public IEnumerable<Pet> AllPetsButNotMice()
@@ -63,17 +67,23 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species==Species.Dog && pet.yearOfBirth > 2010));
+            return _petsInTheStore.ThatSatisfy((Pet.IsASpeciesOf(Species.Dog).And(Pet.IsBornAfter(2010))));
         }
 
         public IEnumerable<Pet> AllMaleDogs()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Dog && pet.sex==Sex.Male));
+            return _petsInTheStore.ThatSatisfy(new Conjuction<Pet>(Pet.IsASpeciesOf(Species.Dog),
+                new Negation<Pet>(Pet.IsFemale())));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011));
+            return _petsInTheStore.ThatSatisfy(new Alternative<Pet>(Pet.IsASpeciesOf(Species.Rabbit),
+                Pet.IsBornAfter(2011)));
         }
     }
+
+    
+
+    
 }
