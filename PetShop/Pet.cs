@@ -55,11 +55,6 @@ namespace Training.DomainClasses
             return new BorAfterCriteria(year);
         }
 
-        public static Predicate<Pet> IsNotASpeciesOf(Species species)
-        {
-            return pet => pet.species != species;
-        }
-
         public class BorAfterCriteria : Criteria<Pet>
         {
             private readonly int _year;
@@ -104,7 +99,10 @@ namespace Training.DomainClasses
                 return _species == pet.species;
             }
         }
-    }
 
-   
+        public static Criteria<Pet> IsMale()
+        {
+            return new SexCriteia(Sex.Male);
+        }
+    }
 }

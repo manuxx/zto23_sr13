@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Training.DomainClasses
 {
@@ -58,22 +60,62 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllPetsButNotMice()
         {
-            return _petsInTheStore.ThatSatisfy(Pet.IsNotASpeciesOf(Species.Mouse));
+            return _petsInTheStore.ThatSatisfy(new Negation<Pet>(Pet.IsASpeciesOf(Species.Mouse)));
         }
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species==Species.Dog && pet.yearOfBirth > 2010));
+            return _petsInTheStore.ThatSatisfy(new Conjunction<Pet>(Pet.IsASpeciesOf(Species.Dog), Pet.IsBornAfter( 2010)));
         }
 
         public IEnumerable<Pet> AllMaleDogs()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Dog && pet.sex==Sex.Male));
+            return _petsInTheStore.ThatSatisfy(new Conjunction<Pet>(Pet.IsASpeciesOf(Species.Dog), Pet.IsMale()));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011));
+            return _petsInTheStore.ThatSatisfy(new Alternative<Pet>(Pet.IsASpeciesOf(Species.Rabbit), Pet.IsBornAfter(2011)));
+        }
+    }
+
+    public class Alternative<TItem> : Criteria<TItem>
+    {
+        private readonly Criteria<TItem>[] _criteria;
+        public Alternative(params Criteria<TItem>[] criteria)
+        {
+            _criteria = criteria;
+        }
+        public bool IsSatisfiedBy(TItem item)
+        {
+            foreach (var criteria in _criteria)
+            {
+                if (criteria.IsSatisfiedBy(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class Conjunction<TItem> : Criteria<TItem>
+    {
+        private readonly Criteria<TItem>[] _criteria;
+        public Conjunction(params Criteria<TItem>[] criteria)
+        {
+            _criteria = criteria;
+        }
+        public bool IsSatisfiedBy(TItem item)
+        {
+            foreach (var criteria in _criteria)
+            {
+                if (!criteria.IsSatisfiedBy(item))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
