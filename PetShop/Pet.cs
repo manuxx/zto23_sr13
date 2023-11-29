@@ -99,5 +99,10 @@ namespace Training.DomainClasses
                 return _species == pet.species;
             }
         }
+
+        public static Criteria<Pet> IsMale()
+        {
+            return new SexCriteia(Sex.Male);
+        }
     }
 }
