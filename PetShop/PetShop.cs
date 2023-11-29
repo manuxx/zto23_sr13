@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Training.DomainClasses
@@ -42,62 +41,47 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMice()
         {
-            return _petsInTheStore.All(p => p.species == Species.Mouse);
+            return _petsInTheStore.ThatSatisfy(Pet.IsSpecieOf(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllFemalePets()
         {
-            return _petsInTheStore.All(p => p.sex == Sex.Female);
+            return _petsInTheStore.ThatSatisfy(Pet.IsFemale());
         }
 
         public IEnumerable<Pet> AllCatsOrDogs()
         {
-            return _petsInTheStore.All(p => p.species == Species.Cat || p.species == Species.Dog);
+            return _petsInTheStore.ThatSatisfy(p => p.species == Species.Cat || p.species == Species.Dog);
         }
 
         public IEnumerable<Pet> AllPetsButNotMice()
         {
-            return _petsInTheStore.All(p => p.species != Species.Mouse);
+            return _petsInTheStore.ThatSatisfy(new NotASpecieCriteria(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2010()
         {
-            return _petsInTheStore.All(p => p.yearOfBirth > 2010);
+            return _petsInTheStore.ThatSatisfy(IsBornAfter(2010));
+        }
+
+        public static ICriteria<Pet> IsBornAfter(int year)
+        {
+            return new BornYearCriteria(greaterThen: year);
         }
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return AllPetsBornAfter2010().All(p => p.species == Species.Dog);
+            return AllPetsBornAfter2010().ThatSatisfy(p => p.species == Species.Dog);
         }
 
         public IEnumerable<Pet> AllMaleDogs()
         {
-            return _petsInTheStore.All(p => p.sex == Sex.Male && p.species == Species.Dog);
+            return _petsInTheStore.ThatSatisfy(p => p.sex == Sex.Male && p.species == Species.Dog);
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.All(p => p.yearOfBirth > 2011 || p.species == Species.Rabbit);
-        }
-    }
-
-    public class ReadOnly<TItem> : IEnumerable<TItem>
-    {
-        private readonly IEnumerable<TItem> _pets;
-
-        public ReadOnly(IEnumerable<TItem> pets)
-        {
-            _pets = pets;
-        }
-
-        public IEnumerator<TItem> GetEnumerator()
-        {
-            return _pets.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return _petsInTheStore.ThatSatisfy(p => p.yearOfBirth > 2011 || p.species == Species.Rabbit);
         }
     }
 }

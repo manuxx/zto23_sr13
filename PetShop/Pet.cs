@@ -39,5 +39,10 @@ namespace Training.DomainClasses
         {
             return !Equals(left, right);
         }
+
+        public static ICriteria<Pet> IsSpecieOf(Species specie) => new SpecieCriteria(specie);
+        public static ICriteria<Pet> IsFemale() => new SexCriteria(Sex.Female);
+        public static ICriteria<Pet> IsMale() => new SexCriteria(Sex.Male);
+        public static ICriteria<Pet> IsAndrogyne() => new SexCriteria(Sex.Androgyne);
     }
 }
