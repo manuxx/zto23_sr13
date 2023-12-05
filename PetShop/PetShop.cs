@@ -1,20 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using Microsoft.VisualBasic;
+using PetShop;
 
 namespace Training.DomainClasses
 {
-    public static class EnumerableTools
-    {
-        public static IEnumerable<TItem> OneAtATime<TItem>(this IEnumerable<TItem> items)
-        {
-            foreach (var item in items)
-            {
-                yield return item;
-            }
-        }
-    }
     public class PetShop
     {
         private IList<Pet> _petsInTheStore;
@@ -37,7 +27,7 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllCats()
         {
-            return _petsInTheStore.SatisfyThat(Pet.IsSpecie(Species.Cat));
+            return _petsInTheStore.ThatSatisfy(Pet.IsASpeciesOf(Species.Cat));
         }
 
         public IEnumerable<Pet> AllPetsSortedByName()
@@ -49,62 +39,67 @@ namespace Training.DomainClasses
 
         public IEnumerable<Pet> AllMice()
         {
-            return _petsInTheStore.SatisfyThat(Pet.IsSpecie(Species.Mouse));
+            return _petsInTheStore.ThatSatisfy(Pet.IsASpeciesOf(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllFemalePets()
         {
-            return _petsInTheStore.SatisfyThat(Pet.IsFemale());
+            return _petsInTheStore.ThatSatisfy(Pet.IsFemale());
+        }
+
+
+        public IEnumerable<Pet> AllPetsBornAfter2010()
+        {
+            return _petsInTheStore.ThatSatisfy(Pet.IsBornAfter(2010));
         }
 
         public IEnumerable<Pet> AllCatsOrDogs()
         {
-            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Cat || pet.species==Species.Dog);
+            return _petsInTheStore.ThatSatisfy((pet => pet.species == Species.Cat || pet.species==Species.Dog));
         }
 
         public IEnumerable<Pet> AllPetsButNotMice()
         {
-            return _petsInTheStore.SatisfyThat(pet => pet.species != Species.Mouse);
-        }
-
-        public IEnumerable<Pet> AllPetsBornAfter2010()
-        {
-            return _petsInTheStore.SatisfyThat(Pet.isBornAfter(2010));
+            return _petsInTheStore.ThatSatisfy(Pet.IsNotASpeciesOf(Species.Mouse));
         }
 
         public IEnumerable<Pet> AllDogsBornAfter2010()
         {
-            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Dog && pet.yearOfBirth > 2010);
+            return _petsInTheStore.ThatSatisfy(Pet.IsASpeciesOf(Species.Dog).And(Pet.IsBornAfter(2010)));
         }
 
         public IEnumerable<Pet> AllMaleDogs()
         {
-            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Dog && pet.sex==Sex.Male);
+            return _petsInTheStore.ThatSatisfy(Pet.IsASpeciesOf(Species.Dog).And(new Pet.Negation(Pet.IsFemale())));
         }
 
         public IEnumerable<Pet> AllPetsBornAfter2011OrRabbits()
         {
-            return _petsInTheStore.SatisfyThat(pet => pet.species == Species.Rabbit || pet.yearOfBirth > 2011);
-        }
-    }
-
-    public class ReadOnly<TItem> : IEnumerable<TItem>
-    {
-        private readonly IEnumerable<TItem> _pets;
-
-        public ReadOnly(IEnumerable<TItem> pets)
-        {
-            _pets = pets;
+            return _petsInTheStore.ThatSatisfy(Pet.IsBornAfter(2011).Or(Pet.IsASpeciesOf(Species.Rabbit)));
         }
 
-        public IEnumerator<TItem> GetEnumerator()
+        public class Conjuction : BinaryCriteria
         {
-            return _pets.GetEnumerator();
+            public Conjuction(Criteria<Pet> first, Criteria<Pet> second) : base(first, second)
+            {
+            }
+
+            public override bool IsSatisfiedBy(Pet item)
+            {
+                return _first.IsSatisfiedBy(item) && _second.IsSatisfiedBy(item);
+            }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public class Alternative : BinaryCriteria
         {
-            return GetEnumerator();
+            public Alternative(Criteria<Pet> first, Criteria<Pet> second) : base(first, second)
+            {
+            }
+
+            public override bool IsSatisfiedBy(Pet item)
+            {
+                return _first.IsSatisfiedBy(item) || _second.IsSatisfiedBy(item);
+            }
         }
     }
 }

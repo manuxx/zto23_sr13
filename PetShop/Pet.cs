@@ -40,58 +40,86 @@ namespace Training.DomainClasses
             return !Equals(left, right);
         }
 
-        public static Criteria<Pet> IsSpecie(Species species)
+        public static Criteria<Pet> IsASpeciesOf(Species species)
         {
             return new SpeciesCriteria(species);
         }
 
         public static Criteria<Pet> IsFemale()
         {
-            return new FemaleCriteria<Pet>();
+            return new SexCriteia(Sex.Female);
         }
 
-        public static Criteria<Pet> isBornAfter(int age)
+        public static Criteria<Pet> IsBornAfter(int year)
         {
-            return new AgeCriteria(age);
+            return new BorAfterCriteria(year);
+        }
+
+        public static Criteria<Pet> IsNotASpeciesOf(Species species)
+        {
+            return new Negation(new SpeciesCriteria(species));
+        }
+
+        public class BorAfterCriteria : Criteria<Pet>
+        {
+            private readonly int _year;
+
+            public BorAfterCriteria(int year)
+            {
+                _year = year;
+            }
+
+            public bool IsSatisfiedBy(Pet item)
+            {
+                return item.yearOfBirth > _year;
+            }
+        }
+
+        public class SexCriteia : Criteria<Pet>
+        {
+            private readonly Sex _sex;
+
+            public SexCriteia(Sex sex)
+            {
+                _sex = sex;
+            }
+
+            public bool IsSatisfiedBy(Pet pet)
+            {
+                return _sex == pet.sex;
+            }
+        }
+
+        public class SpeciesCriteria : Criteria<Pet>
+        {
+            private readonly Species _species;
+
+            public SpeciesCriteria(Species species)
+            {
+                _species = species;
+            }
+
+            public bool IsSatisfiedBy(Pet pet)
+            {
+                return _species == pet.species;
+            }
+        }
+
+        public class Negation : Criteria<Pet>
+        {
+            private readonly Criteria<Pet> _criteria;
+
+            public Negation(Criteria<Pet> criteria)
+            {
+                _criteria = criteria;
+            }
+
+            public bool IsSatisfiedBy(Pet item)
+            {
+                return !_criteria.IsSatisfiedBy(item);
+            }
         }
     }
 
-    public class AgeCriteria : Criteria<Pet>
-    {
-        private readonly int _age;
-
-        public AgeCriteria(int age)
-        {
-            _age = age;
-        }
-
-        public bool IsSatisfyBy(Pet item)
-        {
-            return item.yearOfBirth > _age;
-        }
-    }
-
-    public class FemaleCriteria<T> : Criteria<T>
-    {
-        public bool IsSatisfyBy(T item)
-        {
-            return (item as Pet).sex == Sex.Female;
-        }
-    }
-
-    public class SpeciesCriteria : Criteria<Pet>
-    {
-        private readonly Species _species;
-
-        public SpeciesCriteria(Species species)
-        {
-            _species = species;
-        }
-
-
-        public bool IsSatisfyBy(Pet item)
-        {
-            return item.species == _species;
-        }
-    }
+   
 }
